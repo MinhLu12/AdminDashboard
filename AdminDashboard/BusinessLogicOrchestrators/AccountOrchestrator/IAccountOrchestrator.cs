@@ -8,6 +8,10 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
 {
     public interface IAccountOrchestrator
     {
+        Task RegisterUserToAccount(Guid accountId, Guid userId);
+
+        Task UpgradePlan(Guid accountId, UpgradePlanRequest request);
+
         Task<Guid> CreateAccount(CreateAccountRequest request);
 
         Task<EnderUserAccountRequest> GetAccountBy(Guid id);

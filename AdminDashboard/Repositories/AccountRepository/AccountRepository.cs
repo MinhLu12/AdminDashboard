@@ -1,6 +1,5 @@
 ﻿using AdminDashboard.Main.Databases;
 using AdminDashboard.Main.Enumerations;
-using AdminDashboard.Main.Factories;
 using AdminDashboard.Models.Database;
 using AdminDashboard.Models.Domain;
 using AdminDashboard.Models.Plans;
@@ -14,13 +13,10 @@ namespace AdminDashboard.Repositories.AccountRepository
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly IPlanTypeFactory PlanTypeFactory;
         private readonly AdminDashboardContext Context;
 
-        public AccountRepository(IPlanTypeFactory planTypeFactory,
-            AdminDashboardContext context)
+        public AccountRepository(AdminDashboardContext context)
         {
-            PlanTypeFactory = planTypeFactory;
             Context = context;
         }
 
@@ -33,18 +29,16 @@ namespace AdminDashboard.Repositories.AccountRepository
             return Guid.Parse(account.Id);
         }
 
-        public async Task<bool> UpgradePlan(Guid accountId, Plan plan)
+        public async Task UpgradePlan(Guid accountId, Plan plan)
         {
             DbAccount dbAccount = await GetAccount(accountId);
             dbAccount.Plan = plan;
 
             await Context.SaveChangesAsync();
-
-            return true;
         }
 
 
-        public async Task AddUserAndAccountRelationship(Guid accountId, Guid userId)
+        public async Task AddUser(Guid accountId, Guid userId)
         {
             Context.User.Add(new DbUser
             {
@@ -64,24 +58,35 @@ namespace AdminDashboard.Repositories.AccountRepository
 
         public async Task<Account> GetAccountBy(Guid id)
         {
-            var dbAccount = await GetAccount(id);
+            DbAccount dbAccount = await GetAccount(id);
             if (AccountDoesNotExist(dbAccount))
                 return null;
 
             List<DbUser> dbUsers = await GetUsersOnAccount(id);
-            var plan = GetPlanFrom(dbAccount);
+
+            PlanType plan = GetPlanFrom(dbAccount);
 
             return BuildAndReturnAccount(id, plan, dbUsers);
+        }
+
+        private static PlanType GetPlanFrom(DbAccount dbAccount)
+        {
+            PlanType plan;
+            if (dbAccount.Plan == Plan.Startup)
+            {
+                plan = new StartupPlan();
+            }
+            else
+            {
+                plan = new EnterprisePlan();
+            }
+
+            return plan;
         }
 
         private async Task<List<DbUser>> GetUsersOnAccount(Guid id)
         {
             return await Context.User.Where(u => u.Account.Id == id.ToString()).ToListAsync();
-        }
-
-        private PlanType GetPlanFrom(DbAccount dbAccount)
-        {
-            return PlanTypeFactory.BuildFrom(dbAccount.Plan);
         }
 
         private async Task<DbAccount> GetAccount(Guid id)

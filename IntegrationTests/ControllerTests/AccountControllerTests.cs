@@ -1,4 +1,5 @@
-﻿using AdminDashboard.Main;
+﻿using AdminDashboard.Exceptions;
+using AdminDashboard.Main;
 using AdminDashboard.Main.Enumerations;
 using AdminDashboard.Models.EndUserRequests;
 using AdminDashboard.Models.JsonRequests;
@@ -76,9 +77,8 @@ namespace IntegrationTests.ControllerTests
             Guid id = await CreateAccount();
 
             await RegisterUserToAccount(id, times: 100);
-            bool registeredUser = await RegisterUserToAccount(id);
 
-            Assert.False(registeredUser);
+            await Assert.ThrowsAsync<UserLimitExceededException>(async () => await RegisterUserToAccount(id));
         }
 
         private async Task<Guid> CreateAccount()
@@ -88,13 +88,11 @@ namespace IntegrationTests.ControllerTests
             return await CreateAccount(request);
         }
 
-        private async Task<bool> RegisterUserToAccount(Guid accountId)
+        private async Task RegisterUserToAccount(Guid accountId)
         {
             Guid userId = Guid.NewGuid();
 
-            HttpResponseMessage response = await _client.PutAsync($"{ControllerUrl}/{accountId}/User/{userId}", null);
-
-            return await GetObjFromHttpResponse<bool>(response);
+            await _client.PutAsync($"{ControllerUrl}/{accountId}/User/{userId}", null);
         }
 
         private async Task UpgradePlan(Guid id, UpgradePlanRequest request)

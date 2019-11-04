@@ -1,7 +1,5 @@
 ﻿using AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator;
 using AdminDashboard.Models.JsonRequests;
-using AdminDashboard.Repositories.AccountRepository;
-using AdminDashboard.Validators.Accounts;
 using AdminDashboard.Validators.Plans;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,19 +12,12 @@ namespace AdminDashboard.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountOrchestrator Orchestrator;
-        private readonly IAccountRepository Repository;
-
-        private readonly IAccountValidator Validator;
         private readonly IPlanValidator PlanValidator;
 
         public AccountController(IAccountOrchestrator orchestrator,
-            IAccountRepository repository,
-            IAccountValidator validator,
             IPlanValidator planValidator)
         {
             Orchestrator = orchestrator;
-            Repository = repository;
-            Validator = validator;
             PlanValidator = planValidator;
         }
 
@@ -36,12 +27,11 @@ namespace AdminDashboard.Controllers
         /// <param name="id">The unique identifier for the account</param>
         /// <returns>The account</returns>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAccount(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            if (!await Validator.DoesAccountExist(id))
-                return NotFound();
+            var retrievedAccount = await Orchestrator.GetAccountBy(id);
 
-            return Ok(await Orchestrator.GetAccountBy(id));
+            return Ok(retrievedAccount);
         }
 
         /// <summary>
@@ -50,12 +40,11 @@ namespace AdminDashboard.Controllers
         /// <param name="accountId">The unique identifier for the account</param>
         /// <returns>The account users</returns>
         [HttpGet("{accountId:guid}/Users")]
-        public async Task<IActionResult> GetAccountUsers(Guid accountId)
+        public async Task<IActionResult> GetUsers(Guid accountId)
         {
-            if (!await Validator.DoesAccountExist(accountId))
-                return NotFound();
+            var accounts = await Orchestrator.GetAccountUsers(accountId);
 
-            return Ok(await Orchestrator.GetAccountUsers(accountId));
+            return Ok(accounts);
         }
 
         /// <summary>
@@ -65,20 +54,9 @@ namespace AdminDashboard.Controllers
         /// <param name="userId">Id of the user</param>
         /// <returns></returns>
         [HttpPut("{accountId:guid}/User/{userId:guid}")]
-        public async Task<IActionResult> RegisterUserToAccount(Guid accountId, Guid userId)
+        public async Task RegisterUser(Guid accountId, Guid userId)
         {
-            if (!await Validator.DoesAccountExist(accountId))
-                return NotFound();
-
-            if (await Validator.DoesAccountAlreadyHaveUser(accountId, userId))
-                return BadRequest();
-
-            if (await Validator.HasAccountReachedMaximumNumberOfUsers(accountId))
-                return BadRequest(false);
-
-            await Repository.AddUserAndAccountRelationship(accountId, userId);
-
-            return Ok(true);
+            await Orchestrator.RegisterUserToAccount(accountId, userId);
         }
 
         /// <summary>
@@ -90,16 +68,12 @@ namespace AdminDashboard.Controllers
         [HttpPut("{accountId:guid}")]
         public async Task<IActionResult> UpgradePlan(Guid accountId, [FromBody]UpgradePlanRequest request)
         {
-            if (!await Validator.DoesAccountExist(accountId))
-                return NotFound();
-
             if (!PlanValidator.IsPlanValid(request.Plan))
                 return BadRequest();
 
-            if (!await PlanValidator.IsValidUpgradeTransition(accountId, request.Plan))
-                return BadRequest();
+            await Orchestrator.UpgradePlan(accountId, request);
 
-            return Ok(await Repository.UpgradePlan(accountId, request.Plan));
+            return Ok();
         }
 
         /// <summary>
@@ -108,7 +82,7 @@ namespace AdminDashboard.Controllers
         /// <param name="request">The plan type associated to the new account</param>
         /// <returns>The id of the created account</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateAccount([FromBody]CreateAccountRequest request)
+        public async Task<IActionResult> Create([FromBody]CreateAccountRequest request)
         {
             if (!PlanValidator.IsPlanValid(request.Plan))
                 return BadRequest();

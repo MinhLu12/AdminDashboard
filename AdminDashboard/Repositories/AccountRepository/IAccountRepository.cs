@@ -11,9 +11,9 @@ namespace AdminDashboard.Repositories.AccountRepository
     {
         Task<Guid> Create(DbAccount account);
 
-        Task<bool> UpgradePlan(Guid accountId, Plan plan);
+        Task UpgradePlan(Guid accountId, Plan plan);
 
-        Task AddUserAndAccountRelationship(Guid accountId, Guid userId);
+        Task AddUser(Guid accountId, Guid userId);
 
         Task<IEnumerable<User>> GetAccountUsers(Guid id);
 

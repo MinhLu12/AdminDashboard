@@ -1,9 +1,6 @@
 using AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator;
-using AdminDashboard.Main.Builders;
 using AdminDashboard.Main.Databases;
-using AdminDashboard.Main.Factories;
 using AdminDashboard.Repositories.AccountRepository;
-using AdminDashboard.Validators.Accounts;
 using AdminDashboard.Validators.Plans;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,8 +27,6 @@ namespace AdminDashboard.Main
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureBuilders(services);
-            ConfigureFactories(services);
             ConfigureOrchestrators(services);
             ConfigureRepositories(services);
             ConfigureValidators(services);
@@ -100,24 +95,13 @@ namespace AdminDashboard.Main
             });
         }
 
-        private void ConfigureBuilders(IServiceCollection services)
-        {
-            services.AddTransient<IAccountBuilder, AccountBuilder>();
-        }
-
         private void ConfigureOrchestrators(IServiceCollection services)
         {
             services.AddTransient<IAccountOrchestrator, AccountOrchestrator>();
         }
 
-        private void ConfigureFactories(IServiceCollection services)
-        {
-            services.AddTransient<IPlanTypeFactory, PlanTypeFactory>();
-        }
-
         private void ConfigureValidators(IServiceCollection services)
         {
-            services.AddTransient<IAccountValidator, AccountValidator>();
             services.AddTransient<IPlanValidator, PlanValidator>();
         }
 
