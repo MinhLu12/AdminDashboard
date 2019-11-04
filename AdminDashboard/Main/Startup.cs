@@ -1,7 +1,6 @@
 using AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator;
 using AdminDashboard.Main.Databases;
 using AdminDashboard.Repositories.AccountRepository;
-using AdminDashboard.Validators.Plans;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +28,6 @@ namespace AdminDashboard.Main
         {
             ConfigureOrchestrators(services);
             ConfigureRepositories(services);
-            ConfigureValidators(services);
             ConfigureDatabase(services);
 
             services.AddControllers();
@@ -98,11 +96,6 @@ namespace AdminDashboard.Main
         private void ConfigureOrchestrators(IServiceCollection services)
         {
             services.AddTransient<IAccountOrchestrator, AccountOrchestrator>();
-        }
-
-        private void ConfigureValidators(IServiceCollection services)
-        {
-            services.AddTransient<IPlanValidator, PlanValidator>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)

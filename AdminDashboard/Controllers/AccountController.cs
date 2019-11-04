@@ -1,6 +1,5 @@
 ﻿using AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator;
 using AdminDashboard.Models.JsonRequests;
-using AdminDashboard.Validators.Plans;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -12,13 +11,10 @@ namespace AdminDashboard.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountOrchestrator Orchestrator;
-        private readonly IPlanValidator PlanValidator;
 
-        public AccountController(IAccountOrchestrator orchestrator,
-            IPlanValidator planValidator)
+        public AccountController(IAccountOrchestrator orchestrator)
         {
             Orchestrator = orchestrator;
-            PlanValidator = planValidator;
         }
 
         /// <summary>
@@ -68,9 +64,6 @@ namespace AdminDashboard.Controllers
         [HttpPut("{accountId:guid}")]
         public async Task<IActionResult> UpgradePlan(Guid accountId, [FromBody]UpgradePlanRequest request)
         {
-            if (!PlanValidator.IsPlanValid(request.Plan))
-                return BadRequest();
-
             await Orchestrator.UpgradePlan(accountId, request);
 
             return Ok();
@@ -84,9 +77,6 @@ namespace AdminDashboard.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody]CreateAccountRequest request)
         {
-            if (!PlanValidator.IsPlanValid(request.Plan))
-                return BadRequest();
-
             return Ok(await Orchestrator.CreateAccount(request));
         }
     }

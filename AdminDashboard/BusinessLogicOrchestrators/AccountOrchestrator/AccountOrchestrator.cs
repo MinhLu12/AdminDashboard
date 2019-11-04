@@ -43,7 +43,8 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
 
             if (DoesntExist(account))
                 throw new AccountNotFoundException();
-
+            if (!IsPlanValid(request.Plan))
+                throw new InvalidPlanException();
             if (!IsProposedPlanHigherThanCurrentPlan(request.Plan, account))
                 throw new InvalidUpgradePlanException();
 
@@ -74,11 +75,19 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
 
         public async Task<Guid> CreateAccount(CreateAccountRequest request)
         {
+            if (!IsPlanValid(request.Plan))
+                throw new InvalidPlanException();
+
             var plan = GetPlanTypeFrom(request);
 
             var account = new Account(plan);
 
             return await Repository.Create(account.ToDatabase());
+        }
+
+        private bool IsPlanValid(Plan plan)
+        {
+            return Enum.IsDefined(typeof(Plan), plan);
         }
 
         private static bool HasUser(Guid userId, Account account)

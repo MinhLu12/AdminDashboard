@@ -28,6 +28,24 @@ namespace UnitTests.OrchestratorTests
         }
 
         [Fact]
+        public async Task CreateAccount_InvalidPlan_ThrowsException()
+        {
+            var request = new CreateAccountRequest() { Plan = (Plan)100 };
+
+            await Assert.ThrowsAsync<InvalidPlanException>(
+                async () => await Orchestrator.CreateAccount(request));
+        }
+
+        [Fact]
+        public async Task UpgradePlan_InvalidPlan_ThrowsException()
+        {
+            var request = new UpgradePlanRequest() { Plan = (Plan)100 };
+
+            await Assert.ThrowsAsync<InvalidPlanException>(
+                async () => await Orchestrator.UpgradePlan(Account.Id, request));
+        }
+
+        [Fact]
         public async Task GetAccountBy__ReturnsAccount()
         {
             var account = await Orchestrator.GetAccountBy(Account.Id);
