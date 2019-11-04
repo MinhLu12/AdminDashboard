@@ -31,7 +31,7 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
             if (HasUser(userId, account))
                 throw new DuplicateUserOnAccountException();
 
-            if (account.Users.Count == account.CurrentPlan.MaxNumberOfUsersAllowed)
+            if (HasReachedUserLimit(account))
                 throw new UserLimitExceededException();
 
             await Repository.AddUser(accountId, userId);
@@ -43,9 +43,11 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
 
             if (DoesntExist(account))
                 throw new AccountNotFoundException();
+
             if (!IsPlanValid(request.Plan))
                 throw new InvalidPlanException();
-            if (!IsProposedPlanHigherThanCurrentPlan(request.Plan, account))
+
+            if (!IsProposedPlanLessThanCurrentPlan(request.Plan, account))
                 throw new InvalidUpgradePlanException();
 
             await Repository.UpgradePlan(accountId, request.Plan);
@@ -85,6 +87,11 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
             return await Repository.Create(account.ToDatabase());
         }
 
+        private static bool HasReachedUserLimit(Account account)
+        {
+            return account.Users.Count == account.CurrentPlan.MaxNumberOfUsersAllowed;
+        }
+
         private bool IsPlanValid(Plan plan)
         {
             return Enum.IsDefined(typeof(Plan), plan);
@@ -95,7 +102,7 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
             return account.Users.Exists(u => u == userId);
         }
 
-        private static bool IsProposedPlanHigherThanCurrentPlan(Plan proposedPlan, Account account)
+        private static bool IsProposedPlanLessThanCurrentPlan(Plan proposedPlan, Account account)
         {
             return account.CurrentPlan.GetPlanType() < proposedPlan;
         }
