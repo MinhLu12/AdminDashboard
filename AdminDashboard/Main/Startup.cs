@@ -64,7 +64,7 @@ namespace AdminDashboard.Main
             IConfigurationSection section = BindIOptionsToAuthorizationConfiguration(services);
 
             var authorizationConfiguration = section.Get<AuthorizationConfiguration>();
-            var key = Encoding.ASCII.GetBytes(authorizationConfiguration.Secret);
+            var key = Encoding.ASCII.GetBytes(authorizationConfiguration.Bearer);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
