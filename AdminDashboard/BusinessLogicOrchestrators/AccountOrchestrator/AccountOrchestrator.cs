@@ -47,7 +47,7 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
             if (!IsPlanValid(request.Plan))
                 throw new InvalidPlanException();
 
-            if (!IsProposedPlanLessThanCurrentPlan(request.Plan, account))
+            if (IsProposedPlanLessThanCurrentPlan(request.Plan, account))
                 throw new InvalidUpgradePlanException();
 
             await Repository.UpgradePlan(accountId, request.Plan);
@@ -104,7 +104,7 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
 
         private static bool IsProposedPlanLessThanCurrentPlan(Plan proposedPlan, Account account)
         {
-            return account.CurrentPlan.GetPlanType() < proposedPlan;
+            return account.CurrentPlan.GetPlanType() >= proposedPlan;
         }
 
         private static bool DoesntExist(Account domain)
