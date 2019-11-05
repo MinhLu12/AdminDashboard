@@ -1,4 +1,5 @@
 ﻿using AdminDashboard.BusinessLogicOrchestrators.LoginOrchestrator;
+using AdminDashboard.BusinessLogicOrchestrators.LoginOrchestrator.PasswordHasher;
 using AdminDashboard.Exceptions;
 using AdminDashboard.Main.Configurations;
 using Microsoft.Extensions.Options;
@@ -25,8 +26,12 @@ namespace GravitationalTest.BusinessOrchestrators.Users
 
         public string Authenticate(string username, string password)
         {
+            var salt = Salt.Create();
+            var hash = Hash.Create(password, salt); 
+            bool match = Hash.Validate(password, salt, hash); // this "password" should reach into dotnet secrets
+
             // TODO: Delete
-            // This is to hash and compare!
+            // This is to hash the password. How?
             if (Username != username || Password != password)
                 throw new InvalidCredentialsException();
 
