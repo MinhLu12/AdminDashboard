@@ -1,12 +1,18 @@
 using AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator;
+using AdminDashboard.BusinessLogicOrchestrators.LoginOrchestrator;
+using AdminDashboard.Main.Configurations;
 using AdminDashboard.Main.Databases;
 using AdminDashboard.Repositories.AccountRepository;
+using GravitationalTest.BusinessOrchestrators.Users;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace AdminDashboard.Main
 {
@@ -25,6 +31,7 @@ namespace AdminDashboard.Main
             ConfigureOrchestrators(services);
             ConfigureRepositories(services);
             ConfigureDatabase(services);
+            ConfigureAuthorization(services);
 
             services.AddControllers();
         }
@@ -41,6 +48,7 @@ namespace AdminDashboard.Main
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -49,6 +57,39 @@ namespace AdminDashboard.Main
             });
 
             EnsureDatabaseSchemaIsMade(app);
+        }
+
+        private void ConfigureAuthorization(IServiceCollection services)
+        {
+            IConfigurationSection section = BindIOptionsToAuthorizationConfiguration(services);
+
+            var authorizationConfiguration = section.Get<AuthorizationConfiguration>();
+            var key = Encoding.ASCII.GetBytes(authorizationConfiguration.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+        }
+
+        private IConfigurationSection BindIOptionsToAuthorizationConfiguration(IServiceCollection services)
+        {
+            var section = Configuration.GetSection("AuthorizationConfiguration");
+            services.Configure<AuthorizationConfiguration>(section);
+
+            return section;
         }
 
         private static void EnsureDatabaseSchemaIsMade(IApplicationBuilder app)
@@ -66,6 +107,7 @@ namespace AdminDashboard.Main
         private void ConfigureOrchestrators(IServiceCollection services)
         {
             services.AddTransient<IAccountOrchestrator, AccountOrchestrator>();
+            services.AddTransient<ILoginOrchestrator, LoginOrchestrator>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)
