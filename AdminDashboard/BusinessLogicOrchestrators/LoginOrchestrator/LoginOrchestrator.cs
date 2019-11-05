@@ -1,5 +1,4 @@
 ﻿using AdminDashboard.BusinessLogicOrchestrators.LoginOrchestrator;
-using AdminDashboard.BusinessLogicOrchestrators.LoginOrchestrator.PasswordHasher;
 using AdminDashboard.Exceptions;
 using AdminDashboard.Main.Configurations;
 using Microsoft.Extensions.Options;
@@ -14,9 +13,7 @@ namespace GravitationalTest.BusinessOrchestrators.Users
 {
     public class LoginOrchestrator : ILoginOrchestrator
     {
-        // users hardcoded for simplicity, store in a db with hashed passwords in production applications
-        private readonly string Username = "test";
-        private readonly string Password = "GravitationalInterviewByMinhNovember2019";
+        private readonly string Username = "Minh";
 
         private readonly AuthorizationConfiguration Configuration;
 
@@ -27,54 +24,51 @@ namespace GravitationalTest.BusinessOrchestrators.Users
 
         public string Authenticate(string username, string password)
         {
-            var salt = Salt.Create();
-            var hash = Hash.Create(password, salt); 
-            bool match = Hash.Validate(password, salt, hash); // this "password" should reach into dotnet secrets
-
-            // How to store this password as a hash?
-            // With the password that outputs, manually store that in dotnet secrets
-            byte[] salts;
-            new RNGCryptoServiceProvider().GetBytes(salts = new byte[16]);
-            var pbkdf2 = new Rfc2898DeriveBytes(Password, salts, 10000);
-            byte[] hashs = pbkdf2.GetBytes(20);
-
-            byte[] hashBytes = new byte[36];
-            Array.Copy(salts, 0, hashBytes, 0, 16);
-            Array.Copy(hashs, 0, hashBytes, 16, 20);
-
-            //OUTPUT
-            string savedPasswordHash = Convert.ToBase64String(hashBytes);
-
-            // COMPARISON LOGIC. Does Password have to be hashed first?
-            // Now, retrieve this.
-            // RY25waYFu+VlSdPUikfbLJEUpt2SuD5rF2bkQMAqwJ+N+6hm
-            Compare("N/s5+iWPYn3I0ZS4O10JU4+zIr/vCFTBoEK7bSc5/utA4cPW");
-
-            // TODO: Delete
-            // This is to hash the password. How?
-            if (Username != username || Password != password)
+            if (UsernameIsIncorrect(username))
                 throw new InvalidCredentialsException();
 
-            // authentication successful so generate jwt token
+            if (IsPasswordIncorrect(password))
+                throw new InvalidCredentialsException();
+
             return GenerateJwtToken();
         }
 
-        private void Compare(string savedPasswordHash)
+        private bool IsPasswordIncorrect(string password)
         {
-            /* Fetch the stored value */
-            //string savedPasswordHash = DBContext.GetUser(u => u.UserName == user).Password;
-            /* Extract the bytes */
-            byte[] hashBytes = Convert.FromBase64String(savedPasswordHash);
-            /* Get the salt */
+            string savedPasswordHash = Configuration.Secret;
+            byte[] expectedHash = GetBytesFrom(savedPasswordHash);
             byte[] salt = new byte[16];
-            Array.Copy(hashBytes, 0, salt, 0, 16);
-            /* Compute the hash on the password the user entered */
-            var pbkdf2 = new Rfc2898DeriveBytes(Password, salt, 10000);
-            byte[] hash = pbkdf2.GetBytes(20);
-            /* Compare the results */
+            Array.Copy(expectedHash, 0, salt, 0, 16);
+
+            byte[] actualHash = HashPasswordAttempt(password, salt);
+
+            return CompareHashes(expectedHash, actualHash);
+        }
+
+        private static bool CompareHashes(byte[] expectedHash, byte[] actualHash)
+        {
             for (int i = 0; i < 20; i++)
-                if (hashBytes[i + 16] != hash[i])
-                    throw new UnauthorizedAccessException();
+                if (expectedHash[i + 16] != actualHash[i])
+                    return true;
+
+            return false;
+        }
+
+        private static byte[] HashPasswordAttempt(string password, byte[] salt)
+        {
+            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
+            byte[] hash = pbkdf2.GetBytes(20);
+            return hash;
+        }
+
+        private static byte[] GetBytesFrom(string savedPasswordHash)
+        {
+            return Convert.FromBase64String(savedPasswordHash);
+        }
+
+        private bool UsernameIsIncorrect(string username)
+        {
+            return Username != username;
         }
 
         private string GenerateJwtToken()
