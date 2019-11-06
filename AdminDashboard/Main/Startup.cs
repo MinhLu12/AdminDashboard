@@ -44,6 +44,12 @@ namespace AdminDashboard.Main
                 app.UseDeveloperExceptionPage();
             }
 
+            // TODO: Remove
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
