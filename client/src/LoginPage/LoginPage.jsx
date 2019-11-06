@@ -1,6 +1,5 @@
 import React from 'react';
 import '../index.css';
-
 import { authenticationService } from '@/_services';
 
 class LoginPage extends React.Component {
@@ -31,7 +30,7 @@ class LoginPage extends React.Component {
 
         authenticationService.login(this.state.username, this.state.password)
             .then(isAuthenticated => {
-                console.log(isAuthenticated);
+                this.props.history.push('/Dashboard');
             })
       }
 

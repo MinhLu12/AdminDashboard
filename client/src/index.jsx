@@ -1,13 +1,20 @@
 import React from 'react';
-import { render } from 'react-dom';
+import { render } from 'react-dom'
 
 import { LoginPage } from './LoginPage';
+import { Dashboard } from './Dashboard';
+import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 
-// setup fake backend
-// import { configureFakeBackend } from './_helpers';
-// configureFakeBackend();
+const routing = (
+  <Router>
+    <Switch>
+      <Route exact path="/" component={LoginPage} />
+      <Route path="/Dashboard" component={Dashboard} />
+    </Switch>
+  </Router>
+)
 
 render(
-    <LoginPage />,
+    routing,
     document.getElementById('app')
 );

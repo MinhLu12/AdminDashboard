@@ -10,9 +10,11 @@ function login(username, password) {
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ username, password })
     };
+    
 
-    return fetch(`${config.apiUrl}api/login/authenticate`, requestOptions)
+    return fetch(`${config.apiUrl}/api/login/authenticate`, requestOptions)
         .then(response => response.json()
             .then(r => console.log(r))
-        );
+            // store token safely
+        )
 }
