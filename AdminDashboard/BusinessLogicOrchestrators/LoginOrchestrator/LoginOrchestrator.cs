@@ -44,11 +44,6 @@ namespace GravitationalTest.BusinessOrchestrators.Users
 
             byte[] actualHash = HashPasswordAttempt(password, salt);
 
-            return CompareHashes(expectedHash, actualHash);
-        }
-
-        private static bool CompareHashes(byte[] expectedHash, byte[] actualHash)
-        {
             for (int i = 0; i < HASH_BYTE_SIZE; i++)
                 if (expectedHash[i + SALT_BYTE_SIZE] != actualHash[i])
                     return true;
