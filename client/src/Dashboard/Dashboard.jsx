@@ -10,30 +10,30 @@ class Dashboard extends React.Component {
     render() {
         return (
             <div>
-                <header class="top-nav">
+                <header className="top-nav">
                 <h1>
-                    <i class="material-icons">supervised_user_circle</i>
+                    <i className="material-icons">supervised_user_circle</i>
                     User Management Dashboard
                 </h1>
-                <button class="button is-border">Logout</button>
+                <button className="button is-border">Logout</button>
                 </header>
 
-                <div class="alert is-error">You have exceeded the maximum number of users for your account, please upgrade your plan to increaese the limit.</div>
-                <div class="alert is-success">Your account has been upgraded successfully!</div>
+                <div className="alert is-error">You have exceeded the maximum number of users for your account, please upgrade your plan to increaese the limit.</div>
+                <div className="alert is-success">Your account has been upgraded successfully!</div>
 
-                <div class="plan">
+                <div className="plan">
                 <header>Startup Plan - $100/Month</header>
 
-                <div class="plan-content">
-                    <div class="progress-bar">
-                    <div style={{width: 35 + '%'}} class="progress-bar-usage"></div>
+                <div className="plan-content">
+                    <div className="progress-bar">
+                    <div style={{width: 35 + '%'}} className="progress-bar-usage"></div>
                     </div>
 
                     <h3>Users: 35/100</h3>
                 </div>
 
                 <footer>
-                    <button class="button is-success">Upgrade to Enterprise Plan</button>
+                    <button className="button is-success">Upgrade to Enterprise Plan</button>
                 </footer>
                 </div>
             </div>
