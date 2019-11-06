@@ -1,16 +1,18 @@
 using AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator;
+using AdminDashboard.BusinessLogicOrchestrators.LoginOrchestrator;
+using AdminDashboard.Main.Configurations;
 using AdminDashboard.Main.Databases;
 using AdminDashboard.Repositories.AccountRepository;
+using GravitationalTest.BusinessOrchestrators.Users;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using System;
-using System.IO;
-using System.Reflection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace AdminDashboard.Main
 {
@@ -29,17 +31,14 @@ namespace AdminDashboard.Main
             ConfigureOrchestrators(services);
             ConfigureRepositories(services);
             ConfigureDatabase(services);
+            ConfigureAuthorization(services);
 
             services.AddControllers();
-
-            ConfigureSwagger(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            UseSwagger(app);
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -49,6 +48,7 @@ namespace AdminDashboard.Main
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -57,6 +57,39 @@ namespace AdminDashboard.Main
             });
 
             EnsureDatabaseSchemaIsMade(app);
+        }
+
+        private void ConfigureAuthorization(IServiceCollection services)
+        {
+            IConfigurationSection section = BindIOptionsToAuthorizationConfiguration(services);
+
+            var authorizationConfiguration = section.Get<AuthorizationConfiguration>();
+            var key = Encoding.ASCII.GetBytes(authorizationConfiguration.Bearer);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+        }
+
+        private IConfigurationSection BindIOptionsToAuthorizationConfiguration(IServiceCollection services)
+        {
+            var section = Configuration.GetSection("AuthorizationConfiguration");
+            services.Configure<AuthorizationConfiguration>(section);
+
+            return section;
         }
 
         private static void EnsureDatabaseSchemaIsMade(IApplicationBuilder app)
@@ -71,31 +104,10 @@ namespace AdminDashboard.Main
             services.AddDbContext<AdminDashboardContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DefaultConnection"]));
         }
 
-        private static void ConfigureSwagger(IServiceCollection services)
-        {
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Admin Dashboard API", Version = "v1" });
-
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-            });
-        }
-
-        private static void UseSwagger(IApplicationBuilder app)
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Admin Dashboard API V1");
-                c.RoutePrefix = string.Empty;
-            });
-        }
-
         private void ConfigureOrchestrators(IServiceCollection services)
         {
             services.AddTransient<IAccountOrchestrator, AccountOrchestrator>();
+            services.AddTransient<ILoginOrchestrator, LoginOrchestrator>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)

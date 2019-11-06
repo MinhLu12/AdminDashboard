@@ -1,11 +1,13 @@
 ﻿using AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator;
 using AdminDashboard.Models.JsonRequests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
 namespace AdminDashboard.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
