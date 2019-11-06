@@ -14,7 +14,6 @@ function login(username, password) {
 
     return fetch(`${config.apiUrl}/api/login/authenticate`, requestOptions)
         .then(response => response.json()
-            .then(r => console.log(r))
-            // store token safely
+            .then(data => sessionStorage.setItem('Token', data))
         )
 }
