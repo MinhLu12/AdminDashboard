@@ -27,11 +27,22 @@ class Dashboard extends React.Component {
     hasReachedUserLimit() {
         return this.state.numberOfUsers == 100;
     }
-    // Make account, get it, display start up plan, number of users, etc.
-    // Then we add users. Refreshs to see them.
-    // Upgrade
-    // Logout
+    
+    hasReachedUserLimit() {
+        return this.state.numberOfUsers == 100;
+    }
 
+    // Reached maximum...That will be a component lifecycle check to constantly compare isFull = true?
+    // Once upgraded calling API upgrade, we turn currentPlan to two, in which case upgrade text is invoked
+    // Show upgrade to enterprise if startupplan = 1
+
+    renderUpgradeButton() {
+        if (this.state.currentPlan === 1) {
+            return (
+                <button className="button is-success">Upgrade to Enterprise Plan</button>
+            );
+        }
+    }
 
     render() {
         return (
@@ -43,24 +54,24 @@ class Dashboard extends React.Component {
                 </h1>
                 <button className="button is-border">Logout</button>
                 </header>
-
+                
                 <div className="alert is-error" >You have exceeded the maximum number of users for your account, please upgrade your plan to increaese the limit.</div>
                 <div className="alert is-success">Your account has been upgraded successfully!</div>
 
                 <div className="plan">
-                <header>Startup Plan - $100/Month</header>
+                    <header>Startup Plan - $100/Month</header>
 
-                <div className="plan-content">
-                    <div className="progress-bar">
-                    <div style={{width: 35 + '%'}} className="progress-bar-usage"></div>
+                    <div className="plan-content">
+                        <div className="progress-bar">
+                        <div style={{width: 35 + '%'}} className="progress-bar-usage"></div>
+                        </div>
+
+                        <h3>Users: {this.state.numberOfUsers}/100</h3>
                     </div>
 
-                    <h3>Users: {this.state.numberOfUsers}/100</h3>
-                </div>
-
-                <footer>
-                    <button className="button is-success">Upgrade to Enterprise Plan</button>
-                </footer>
+                    <footer>
+                        {this.renderUpgradeButton()}
+                    </footer>
                 </div>
             </div>
         )
