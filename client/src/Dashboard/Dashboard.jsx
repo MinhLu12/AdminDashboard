@@ -2,6 +2,7 @@ import React from 'react';
 import '../index.css';
 import { accountRepository } from '@/_services';
 import { authenticationService } from '@/_services';
+const signalR = require('@aspnet/signalr')
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -11,13 +12,29 @@ class Dashboard extends React.Component {
             currentPlan: null,
             numberOfUsers: null,
             maximumNumberOfUsersAllowed: null,
-            pricePerMonth: null
+            pricePerMonth: null,
+            hubConnection: null
         };
 
         this.logout = this.logout.bind(this);
     }
 
     componentDidMount() {
+        const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:44333/userHub")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();  // You have a // in your server
+        this.setState({ hubConnection });
+
+        hubConnection.on("AddedUser", data => {
+            console.log(data);
+        });
+        // hubConnection.start().then(function () {
+        //     console.log("connected");
+        // });
+
+        console.log(hubConnection);
+
         accountRepository.create()
         .then(res => accountRepository.get(res))
         .then(res => {

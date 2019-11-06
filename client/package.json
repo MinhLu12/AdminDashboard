@@ -4,6 +4,7 @@
         "start": "webpack-dev-server --open"
     },
     "dependencies": {
+        "@aspnet/signalr": "^1.1.4",
         "formik": "^1.5.2",
         "history": "^4.9.0",
         "react": "^16.8.6",
