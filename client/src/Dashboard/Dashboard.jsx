@@ -6,10 +6,21 @@ class Dashboard extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            currentPlan: 1,
+            numberOfUsers: 0
+        };
+
     }
 
     componentDidMount() {
-        var result = accountRepository.create();
+        accountRepository.create()
+        .then(res => accountRepository.get(res))
+        .then(res => {
+            this.setState({ currentPlan: res.currentPlan, numberOfUsers: res.users})
+        })
+        .then(console.log(this.state));
+
     }
     // Make account, get it, display start up plan, number of users, etc.
     // Then we add users. Refreshs to see them.
