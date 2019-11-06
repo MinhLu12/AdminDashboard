@@ -8,7 +8,7 @@ class Dashboard extends React.Component {
 
         this.state = {
             currentPlan: 1,
-            numberOfUsers: 0
+            numberOfUsers: 15
         };
 
     }
@@ -17,10 +17,15 @@ class Dashboard extends React.Component {
         accountRepository.create()
         .then(res => accountRepository.get(res))
         .then(res => {
-            this.setState({ currentPlan: res.currentPlan, numberOfUsers: res.users})
+            this.setState({ currentPlan: res.currentPlan, numberOfUsers: res.users.length})
         })
-        .then(console.log(this.state));
 
+    }
+
+    // May want API to return isFull...and max number of users allowed, and cost
+    // This is a bandaid for now
+    hasReachedUserLimit() {
+        return this.state.numberOfUsers == 100;
     }
     // Make account, get it, display start up plan, number of users, etc.
     // Then we add users. Refreshs to see them.
@@ -39,7 +44,7 @@ class Dashboard extends React.Component {
                 <button className="button is-border">Logout</button>
                 </header>
 
-                <div className="alert is-error">You have exceeded the maximum number of users for your account, please upgrade your plan to increaese the limit.</div>
+                <div className="alert is-error" >You have exceeded the maximum number of users for your account, please upgrade your plan to increaese the limit.</div>
                 <div className="alert is-success">Your account has been upgraded successfully!</div>
 
                 <div className="plan">
@@ -50,7 +55,7 @@ class Dashboard extends React.Component {
                     <div style={{width: 35 + '%'}} className="progress-bar-usage"></div>
                     </div>
 
-                    <h3>Users: 35/100</h3>
+                    <h3>Users: {this.state.numberOfUsers}/100</h3>
                 </div>
 
                 <footer>
