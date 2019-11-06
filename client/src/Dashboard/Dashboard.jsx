@@ -8,7 +8,7 @@ class Dashboard extends React.Component {
 
         this.state = {
             currentPlan: 1,
-            numberOfUsers: 15
+            numberOfUsers: 0
         };
 
     }
@@ -44,6 +44,22 @@ class Dashboard extends React.Component {
         }
     }
 
+    renderHeader() {
+        if (this.state.currentPlan === 1) {
+            return (
+                <header>Startup Plan - $100/Month</header>
+            );
+        }
+        else if (this.state.currentPlan === 2) {
+            return (
+                <header>Enterprise Plan - $1000/Month</header>
+            );
+        }
+    }
+
+    //<div className="alert is-error" >You have exceeded the maximum number of users for your account, please upgrade your plan to increaese the limit.</div>
+    //<div className="alert is-success">Your account has been upgraded successfully!</div>
+    
     render() {
         return (
             <div>
@@ -55,11 +71,10 @@ class Dashboard extends React.Component {
                 <button className="button is-border">Logout</button>
                 </header>
                 
-                <div className="alert is-error" >You have exceeded the maximum number of users for your account, please upgrade your plan to increaese the limit.</div>
-                <div className="alert is-success">Your account has been upgraded successfully!</div>
+                
 
                 <div className="plan">
-                    <header>Startup Plan - $100/Month</header>
+                    {this.renderHeader()}
 
                     <div className="plan-content">
                         <div className="progress-bar">
