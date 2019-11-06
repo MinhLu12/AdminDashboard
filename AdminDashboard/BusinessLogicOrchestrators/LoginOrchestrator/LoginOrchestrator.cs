@@ -14,6 +14,8 @@ namespace GravitationalTest.BusinessOrchestrators.Users
     public class LoginOrchestrator : ILoginOrchestrator
     {
         private readonly string Username = "Minh";
+        private static readonly int SALT_BYTE_SIZE = 16; // byte array size for the salt
+        private static readonly int HASH_BYTE_SIZE = 20; // byte array size for the hash, together with salt is 36 bytes
 
         private readonly AuthorizationConfiguration Configuration;
 
@@ -37,8 +39,8 @@ namespace GravitationalTest.BusinessOrchestrators.Users
         {
             string savedPasswordHash = Configuration.Secret;
             byte[] expectedHash = GetBytesFrom(savedPasswordHash);
-            byte[] salt = new byte[16];
-            Array.Copy(expectedHash, 0, salt, 0, 16);
+            byte[] salt = new byte[SALT_BYTE_SIZE];
+            Array.Copy(expectedHash, 0, salt, 0, SALT_BYTE_SIZE);
 
             byte[] actualHash = HashPasswordAttempt(password, salt);
 
@@ -47,8 +49,8 @@ namespace GravitationalTest.BusinessOrchestrators.Users
 
         private static bool CompareHashes(byte[] expectedHash, byte[] actualHash)
         {
-            for (int i = 0; i < 20; i++)
-                if (expectedHash[i + 16] != actualHash[i])
+            for (int i = 0; i < HASH_BYTE_SIZE; i++)
+                if (expectedHash[i + SALT_BYTE_SIZE] != actualHash[i])
                     return true;
 
             return false;
@@ -57,7 +59,7 @@ namespace GravitationalTest.BusinessOrchestrators.Users
         private static byte[] HashPasswordAttempt(string password, byte[] salt)
         {
             var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
-            byte[] hash = pbkdf2.GetBytes(20);
+            byte[] hash = pbkdf2.GetBytes(HASH_BYTE_SIZE);
             return hash;
         }
 
@@ -73,9 +75,9 @@ namespace GravitationalTest.BusinessOrchestrators.Users
 
         private string GenerateJwtToken()
         {
-            byte[] key = GetTokenKey();
+            byte[] key = GetSigningKey();
 
-            SecurityTokenDescriptor details = GenerateTokenDetailsFrom(key);
+            SecurityTokenDescriptor details = GenerateTokenDetailsWith(key);
 
             return WriteTokenWith(details);
         }
@@ -87,12 +89,12 @@ namespace GravitationalTest.BusinessOrchestrators.Users
             return tokenHandler.WriteToken(token);
         }
 
-        private byte[] GetTokenKey()
+        private byte[] GetSigningKey()
         {
             return Encoding.ASCII.GetBytes(Configuration.Bearer);
         }
 
-        private static SecurityTokenDescriptor GenerateTokenDetailsFrom(byte[] key)
+        private static SecurityTokenDescriptor GenerateTokenDetailsWith(byte[] key)
         {
             return new SecurityTokenDescriptor
             {
