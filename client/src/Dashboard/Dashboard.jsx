@@ -1,11 +1,21 @@
 import React from 'react';
 import '../index.css';
+import { accountRepository } from '@/_services';
 
 class Dashboard extends React.Component {
     constructor(props) {
         super(props);
 
     }
+
+    componentDidMount() {
+        var result = accountRepository.create();
+    }
+    // Make account, get it, display start up plan, number of users, etc.
+    // Then we add users. Refreshs to see them.
+    // Upgrade
+    // Logout
+
 
     render() {
         return (

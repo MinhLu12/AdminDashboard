@@ -31,7 +31,6 @@ module.exports = {
         historyApiFallback: true
     },
     externals: {
-        // TODO: Change to the server. Also in web API, use only one URL.
         config: JSON.stringify({
             apiUrl: 'https://localhost:44333'
         })
