@@ -29,7 +29,9 @@ class LoginPage extends React.Component {
         event.preventDefault();
 
         authenticationService.login(this.state.username, this.state.password)
-            .then(this.props.history.push('/Dashboard'))
+            .then(() => {
+                this.props.history.push('/Dashboard');
+            })
       }
 
     render() {

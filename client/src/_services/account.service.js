@@ -17,9 +17,7 @@ function create() {
     
 
     return fetch(`${config.apiUrl}/api/account`, requestOptions)
-        .then(response => response.json()
-        //.then(data => console.log(data))
-        )
+        .then(response => response.json())
 }
 
 function get(id) {

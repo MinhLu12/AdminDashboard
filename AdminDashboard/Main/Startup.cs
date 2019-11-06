@@ -44,11 +44,12 @@ namespace AdminDashboard.Main
                 app.UseDeveloperExceptionPage();
             }
 
-            // TODO: Remove
-            app.UseCors(x => x
-                .AllowAnyOrigin()
+            app.UseCors(builder =>
+            builder
+                .WithOrigins("http://localhost:8080")
                 .AllowAnyMethod()
-                .AllowAnyHeader());
+                .AllowAnyHeader()
+                .Build());
 
             app.UseHttpsRedirection();
 

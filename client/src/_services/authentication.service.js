@@ -2,6 +2,7 @@ import config from 'config';
 
 export const authenticationService = {
     login,
+    logout
 };
 
 function login(username, password) {
@@ -16,4 +17,8 @@ function login(username, password) {
         .then(response => response.json()
             .then(data => sessionStorage.setItem('Token', data))
         )
+}
+
+function logout() {
+    sessionStorage.removeItem("Token");
 }

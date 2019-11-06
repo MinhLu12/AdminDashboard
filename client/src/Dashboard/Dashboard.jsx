@@ -1,6 +1,7 @@
 import React from 'react';
 import '../index.css';
 import { accountRepository } from '@/_services';
+import { authenticationService } from '@/_services';
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -12,13 +13,17 @@ class Dashboard extends React.Component {
             maximumNumberOfUsersAllowed: null,
             pricePerMonth: null
         };
+
+        this.logout = this.logout.bind(this);
     }
 
     componentDidMount() {
         accountRepository.create()
         .then(res => accountRepository.get(res))
         .then(res => {
-            this.setState({ currentPlan: res.currentPlan, numberOfUsers: res.users.length, maximumNumberOfUsersAllowed: res.maximumNumberOfUsersAllowed,
+            this.setState({ currentPlan: res.currentPlan, 
+                numberOfUsers: res.users.length, 
+                maximumNumberOfUsersAllowed: res.maximumNumberOfUsersAllowed,
             pricePerMonth: res.pricePerMonth })
         });
     }
@@ -55,6 +60,11 @@ class Dashboard extends React.Component {
             );
         }
     }
+
+    logout() {
+        authenticationService.logout()
+        this.props.history.push('/');
+    }
     
     render() {
         return (
@@ -64,7 +74,7 @@ class Dashboard extends React.Component {
                     <i className="material-icons">supervised_user_circle</i>
                     User Management Dashboard
                 </h1>
-                <button className="button is-border">Logout</button>
+                <button onClick={this.logout} className="button is-border">Logout</button>
                 </header>
                 
                 {this.renderUserLimitExceededMessage()}
