@@ -37,7 +37,9 @@ namespace AdminDashboard.Models.Domain
             {
                 Id = Id,
                 Users = Users,
-                CurrentPlan = CurrentPlan.GetPlanType()
+                CurrentPlan = CurrentPlan.GetPlanType(),
+                MaximumNumberOfUsersAllowed = CurrentPlan.MaxNumberOfUsersAllowed,
+                PricePerMonth = CurrentPlan.PricePerMonth
             };
         }
 

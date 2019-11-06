@@ -1,8 +1,6 @@
 ﻿using AdminDashboard.Main.Enumerations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AdminDashboard.Models.EndUserRequests
 {
@@ -11,5 +9,7 @@ namespace AdminDashboard.Models.EndUserRequests
         public Guid Id { get; set; }
         public IEnumerable<Guid> Users { get; set; }
         public Plan CurrentPlan { get; set; }
+        public int MaximumNumberOfUsersAllowed { get; set; }
+        public float PricePerMonth { get; set; }
     }
 }

@@ -7,27 +7,26 @@ class Dashboard extends React.Component {
         super(props);
 
         this.state = {
-            currentPlan: 1,
-            numberOfUsers: 0
+            currentPlan: null,
+            numberOfUsers: null,
+            maximumNumberOfUsersAllowed: null,
+            pricePerMonth: null
         };
-
     }
 
     componentDidMount() {
         accountRepository.create()
         .then(res => accountRepository.get(res))
         .then(res => {
-            this.setState({ currentPlan: res.currentPlan, numberOfUsers: res.users.length})
-        })
-
+            this.setState({ currentPlan: res.currentPlan, numberOfUsers: res.users.length, maximumNumberOfUsersAllowed: res.maximumNumberOfUsersAllowed,
+            pricePerMonth: res.pricePerMonth })
+        });
     }
+
+    // So, every now and then, 
 
     // May want API to return isFull...and max number of users allowed, and cost
     // This is a bandaid for now
-    hasReachedUserLimit() {
-        return this.state.numberOfUsers == 100;
-    }
-    
     hasReachedUserLimit() {
         return this.state.numberOfUsers == 100;
     }
@@ -47,12 +46,12 @@ class Dashboard extends React.Component {
     renderHeader() {
         if (this.state.currentPlan === 1) {
             return (
-                <header>Startup Plan - $100/Month</header>
+                <header>Startup Plan - ${this.state.pricePerMonth}/Month</header>
             );
         }
         else if (this.state.currentPlan === 2) {
             return (
-                <header>Enterprise Plan - $1000/Month</header>
+                <header>Enterprise Plan - ${this.state.pricePerMonth}/Month</header>
             );
         }
     }
