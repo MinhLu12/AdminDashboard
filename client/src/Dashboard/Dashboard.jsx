@@ -1,7 +1,8 @@
 import React from 'react';
 import '../index.css';
 import { accountRepository } from '@/_services';
-import { authenticationService } from '@/_services';
+import { authenticationRepository } from '@/_services';
+import config from 'config';
 const signalR = require('@aspnet/signalr')
 
 class Dashboard extends React.Component {
@@ -52,7 +53,7 @@ class Dashboard extends React.Component {
 
     configureUserHub() {
         return new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:44333/userHub")
+            .withUrl(`${config.apiUrl}/userHub`)
             .build();
     }
 
@@ -65,20 +66,25 @@ class Dashboard extends React.Component {
     }
 
     renderUpgradeButton() {
-        if (this.state.currentPlan === 1) {
+        if (this.state.currentPlan == 1) {
             return (
                 <button onClick={this.upgradePlan} className="button is-success">Upgrade to Enterprise Plan</button>
             );
         }
     }
 
+    upgradePlan() {
+        accountRepository.upgradePlan(this.state.accountId);
+        this.setState({ currentPlan: 2, maximumNumberOfUsersAllowed: 1000, pricePerMonth: 1000});
+    }
+
     renderHeader() {
-        if (this.state.currentPlan === 1) {
+        if (this.state.currentPlan == 1) {
             return (
                 <header>Startup Plan - ${this.state.pricePerMonth}/Month</header>
             );
         }
-        else if (this.state.currentPlan === 2) {
+        else if (this.state.currentPlan == 2) {
             return (
                 <header>Enterprise Plan - ${this.state.pricePerMonth}/Month</header>
             );
@@ -86,7 +92,7 @@ class Dashboard extends React.Component {
     }
 
     renderUpgradeSuccessMessage() {
-        if (this.state.currentPlan === 2) {
+        if (this.state.currentPlan == 2) {
             return (
                 <div className="alert is-success">Your account has been upgraded successfully!</div>
             );
@@ -94,13 +100,8 @@ class Dashboard extends React.Component {
     }
 
     logout() {
-        authenticationService.logout()
+        authenticationRepository.logout()
         this.props.history.push('/');
-    }
-
-    upgradePlan() {
-        accountRepository.upgradePlan(this.state.accountId);
-        this.setState({ currentPlan: 2, maximumNumberOfUsersAllowed: 1000, pricePerMonth: 1000});
     }
     
     render() {

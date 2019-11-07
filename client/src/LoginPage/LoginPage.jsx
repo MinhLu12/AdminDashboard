@@ -1,6 +1,6 @@
 import React from 'react';
 import '../index.css';
-import { authenticationService } from '@/_services';
+import { authenticationRepository } from '@/_services';
 
 class LoginPage extends React.Component {
     constructor(props) {
@@ -17,7 +17,7 @@ class LoginPage extends React.Component {
     }
 
     handleUsernameChange(event) {
-        // split up the @...
+        // TODO: Split it
         this.setState({ username: event.target.value });
     }
 
@@ -28,10 +28,8 @@ class LoginPage extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
 
-        authenticationService.login(this.state.username, this.state.password)
-            .then(() => {
-                this.props.history.push('/Dashboard');
-            })
+        authenticationRepository.login(this.state.username, this.state.password)
+            .then(() => this.props.history.push('/Dashboard'))
       }
 
     render() {
@@ -42,7 +40,7 @@ class LoginPage extends React.Component {
 
                     <div>
                         <label htmlFor="email">Email Address</label>
-                        <input type="text" id="email" value={this.state.username} onChange={this.handleUsernameChange} className="field" />
+                        <input type="email" id="email" value={this.state.username} onChange={this.handleUsernameChange} className="field" />
                     </div>
 
                     <div>

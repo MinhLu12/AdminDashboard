@@ -1,6 +1,6 @@
 import config from 'config';
 
-export const authenticationService = {
+export const authenticationRepository = {
     login,
     logout
 };
@@ -12,11 +12,9 @@ function login(username, password) {
         body: JSON.stringify({ username, password })
     };
     
-
     return fetch(`${config.apiUrl}/api/login/authenticate`, requestOptions)
         .then(response => response.json()
-            .then(data => sessionStorage.setItem('Token', data))
-        )
+        .then(token => sessionStorage.setItem('Token', token)))
 }
 
 function logout() {
