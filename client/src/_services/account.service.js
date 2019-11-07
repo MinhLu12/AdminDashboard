@@ -2,7 +2,8 @@ import config from 'config';
 
 export const accountRepository = {
     create,
-    get
+    get,
+    upgradePlan
 };
 
 function create() {
@@ -18,6 +19,19 @@ function create() {
 
     return fetch(`${config.apiUrl}/api/account`, requestOptions)
         .then(response => response.json())
+}
+
+function upgradePlan(id) {
+    const requestOptions = {
+        method: 'PUT',
+        withCredentials: true,
+        headers: { 'Content-Type': 'application/json',
+                   'Accept': 'application/json',
+                   'Authorization': `Bearer ${sessionStorage.getItem("Token")}` },
+        body: JSON.stringify({ "plan": 2 })
+    };
+    
+    return fetch(`${config.apiUrl}/api/account/${id}`, requestOptions);
 }
 
 function get(id) {

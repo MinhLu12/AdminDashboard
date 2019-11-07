@@ -9,6 +9,7 @@ class Dashboard extends React.Component {
         super(props);
 
         this.state = {
+            accountId: null,
             currentPlan: null,
             numberOfUsers: null,
             maximumNumberOfUsersAllowed: null,
@@ -17,6 +18,7 @@ class Dashboard extends React.Component {
         };
 
         this.logout = this.logout.bind(this);
+        this.upgradePlan = this.upgradePlan.bind(this);
     }
 
     componentDidMount() {
@@ -33,8 +35,12 @@ class Dashboard extends React.Component {
         });
 
         accountRepository.create()
-        .then(res => accountRepository.get(res))
         .then(res => {
+            this.setState({ accountId: res });
+            return accountRepository.get(res);
+        })
+        .then(res => {
+            console.log(res);
             this.setState({ currentPlan: res.currentPlan, 
                 numberOfUsers: res.users.length, 
                 maximumNumberOfUsersAllowed: res.maximumNumberOfUsersAllowed,
@@ -49,7 +55,7 @@ class Dashboard extends React.Component {
     renderUpgradeButton() {
         if (this.state.currentPlan === 1) {
             return (
-                <button className="button is-success">Upgrade to Enterprise Plan</button>
+                <button onClick={this.upgradePlan} className="button is-success">Upgrade to Enterprise Plan</button>
             );
         }
     }
@@ -78,6 +84,12 @@ class Dashboard extends React.Component {
     logout() {
         authenticationService.logout()
         this.props.history.push('/');
+    }
+
+    upgradePlan() {
+        console.log(this.state);
+        // accountRepository.upgradePlan(this.state.accountId);
+        // this.setState({ currentPlan: 2, maximumNumberOfUsersAllowed: 1000, pricePerMonth: 1000});
     }
     
     render() {
