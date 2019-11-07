@@ -127,6 +127,7 @@ class Dashboard extends React.Component {
                         </div>
 
                         <h3>Users: {this.state.numberOfUsers}/{this.state.maximumNumberOfUsersAllowed}</h3>
+                        <h3>Account Id: {this.state.accountId}</h3>
                     </div>
 
                     <footer>
