@@ -22,10 +22,25 @@ class Dashboard extends React.Component {
     }
 
     componentDidMount() {
-        const hub = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:44333/userHub")
-        .build(); 
+        const hub = this.configureUserHub();
+        this.start(hub);
 
+        this.createAndGetAccount();
+    }
+
+    createAndGetAccount() {
+        accountRepository.create()
+            .then(id => accountRepository.get(id))
+            .then(createdAccount => {
+                this.setState({ accountId: createdAccount.id,
+                    currentPlan: createdAccount.currentPlan, 
+                    numberOfUsers: createdAccount.users.length, 
+                    maximumNumberOfUsersAllowed: createdAccount.maximumNumberOfUsersAllowed,
+                    pricePerMonth: createdAccount.pricePerMonth })
+        });
+    }
+
+    start(hub) {
         this.setState({ hub: hub }, () => {
             this.state.hub.start()
 
@@ -33,19 +48,12 @@ class Dashboard extends React.Component {
                 this.setState({ numberOfUsers: this.state.numberOfUsers + 1 })
             });
         });
+    }
 
-        accountRepository.create()
-        .then(res => {
-            this.setState({ accountId: res });
-            return accountRepository.get(res);
-        })
-        .then(res => {
-            console.log(res);
-            this.setState({ currentPlan: res.currentPlan, 
-                numberOfUsers: res.users.length, 
-                maximumNumberOfUsersAllowed: res.maximumNumberOfUsersAllowed,
-            pricePerMonth: res.pricePerMonth })
-        });
+    configureUserHub() {
+        return new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:44333/userHub")
+            .build();
     }
 
     renderUserLimitExceededMessage() {
