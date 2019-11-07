@@ -84,7 +84,7 @@ class Dashboard extends React.Component {
                 <header>Startup Plan - ${this.state.pricePerMonth}/Month</header>
             );
         }
-        else if (this.state.currentPlan == 2) {
+        else {
             return (
                 <header>Enterprise Plan - ${this.state.pricePerMonth}/Month</header>
             );

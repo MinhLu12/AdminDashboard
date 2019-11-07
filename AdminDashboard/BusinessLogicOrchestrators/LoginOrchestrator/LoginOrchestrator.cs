@@ -68,7 +68,7 @@ namespace GravitationalTest.BusinessOrchestrators.Users
 
         private bool UsernameIsIncorrect(string username)
         {
-            return username != Username;
+            return Username != username;
         }
 
         private string GenerateJwtToken()
