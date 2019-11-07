@@ -2,6 +2,8 @@ import React from 'react';
 import '../index.css';
 import { authenticationRepository, accountRepository } from '@/_services';
 import config from 'config';
+import { PlanTypes } from './plantypes';
+
 const signalR = require('@aspnet/signalr')
 
 class Dashboard extends React.Component {
@@ -64,7 +66,7 @@ class Dashboard extends React.Component {
     }
 
     renderUpgradeButton() {
-        if (this.state.currentPlan == 1) {
+        if (this.state.currentPlan == PlanTypes.STARTUP_PLAN) {
             return (
                 <button onClick={this.upgradePlan} className="button is-success">Upgrade to Enterprise Plan</button>
             );
@@ -73,24 +75,17 @@ class Dashboard extends React.Component {
 
     upgradePlan() {
         accountRepository.upgradePlan(this.state.accountId);
-        this.setState({ currentPlan: 2, maximumNumberOfUsersAllowed: 1000, pricePerMonth: 1000});
+        this.setState({ currentPlan: PlanTypes.ENTERPRISE_PLAN, maximumNumberOfUsersAllowed: 1000, pricePerMonth: 1000});
     }
 
     renderHeader() {
-        if (this.state.currentPlan == 1) {
-            return (
-                <header>Startup Plan - ${this.state.pricePerMonth}/Month</header>
-            );
-        }
-        else {
-            return (
-                <header>Enterprise Plan - ${this.state.pricePerMonth}/Month</header>
-            );
-        }
+        return (
+            <header>${this.state.currentPlan} Plan - ${this.state.pricePerMonth}/Month</header>
+        );
     }
 
     renderUpgradeSuccessMessage() {
-        if (this.state.currentPlan == 2) {
+        if (this.state.currentPlan == PlanTypes.ENTERPRISE_PLAN) {
             return (
                 <div className="alert is-success">Your account has been upgraded successfully!</div>
             );
@@ -106,11 +101,11 @@ class Dashboard extends React.Component {
         return (
             <div>
                 <header className="top-nav">
-                <h1>
-                    <i className="material-icons">supervised_user_circle</i>
-                    User Management Dashboard
-                </h1>
-                <button onClick={this.logout} className="button is-border">Logout</button>
+                    <h1>
+                        <i className="material-icons">supervised_user_circle</i>
+                        User Management Dashboard
+                    </h1>
+                    <button onClick={this.logout} className="button is-border">Logout</button>
                 </header>
                 
                 {this.renderUserLimitExceededMessage()}
