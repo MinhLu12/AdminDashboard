@@ -16,7 +16,6 @@ class Dashboard extends React.Component {
             numberOfUsers: null,
             maximumNumberOfUsersAllowed: null,
             pricePerMonth: null,
-            hub: null,
             showUpgradedSuccessMessage: false
         };
 
@@ -34,22 +33,20 @@ class Dashboard extends React.Component {
 
     getAccount() {
         accountRepository.get(this.props.location.state.id)
-            .then(createdAccount => {
-                this.setState({ accountId: createdAccount.id,
-                    currentPlan: createdAccount.currentPlan, 
-                    numberOfUsers: createdAccount.users.length, 
-                    maximumNumberOfUsersAllowed: createdAccount.maximumNumberOfUsersAllowed,
-                    pricePerMonth: createdAccount.pricePerMonth })
+            .then(account => {
+                this.setState({ accountId: account.id,
+                    currentPlan: account.currentPlan, 
+                    numberOfUsers: account.users.length, 
+                    maximumNumberOfUsersAllowed: account.maximumNumberOfUsersAllowed,
+                    pricePerMonth: account.pricePerMonth })
         });
     }
 
     start(hub) {
-        this.setState({ hub: hub }, () => {
-            this.state.hub.start()
+        hub.start()
 
-            this.state.hub.on("AddedUser", () => {
-                this.setState({ numberOfUsers: this.state.numberOfUsers + 1 })
-            });
+        hub.on("AddedUser", () => {
+            this.setState({ numberOfUsers: this.state.numberOfUsers + 1 })
         });
     }
 
