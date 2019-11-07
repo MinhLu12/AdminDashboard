@@ -91,9 +91,8 @@ class Dashboard extends React.Component {
     }
 
     upgradePlan() {
-        console.log(this.state);
-        // accountRepository.upgradePlan(this.state.accountId);
-        // this.setState({ currentPlan: 2, maximumNumberOfUsersAllowed: 1000, pricePerMonth: 1000});
+        accountRepository.upgradePlan(this.state.accountId);
+        this.setState({ currentPlan: 2, maximumNumberOfUsersAllowed: 1000, pricePerMonth: 1000});
     }
     
     render() {
