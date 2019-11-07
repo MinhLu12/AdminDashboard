@@ -68,10 +68,10 @@ namespace GravitationalTest.BusinessOrchestrators.Users
 
         private bool UsernameIsIncorrect(string username)
         {
-            return GetUsernameFromEmailFormat(username) != Username;
+            return RemoveEmailFormat(username) != Username;
         }
 
-        private static string GetUsernameFromEmailFormat(string username)
+        private static string RemoveEmailFormat(string username)
         {
             return username.Split("@")[0];
         }
