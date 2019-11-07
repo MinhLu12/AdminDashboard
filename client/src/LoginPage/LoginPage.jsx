@@ -1,6 +1,6 @@
 import React from 'react';
 import '../index.css';
-import { authenticationRepository } from '@/_services';
+import { authenticationRepository, accountRepository } from '@/_services';
 
 class LoginPage extends React.Component {
     constructor(props) {
@@ -28,7 +28,15 @@ class LoginPage extends React.Component {
         event.preventDefault();
 
         authenticationRepository.login(this.state.username.split('@')[0], this.state.password)
-            .then(() => this.props.history.push('/Dashboard'))
+            .then(() => {
+                accountRepository.create()
+                .then(id => {
+                    this.props.history.push({
+                        pathname: '/Dashboard',
+                        state: { id: id }
+                    })
+                })
+            });
       }
 
     render() {

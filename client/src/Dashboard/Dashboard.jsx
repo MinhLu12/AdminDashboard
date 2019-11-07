@@ -1,7 +1,6 @@
 import React from 'react';
 import '../index.css';
-import { accountRepository } from '@/_services';
-import { authenticationRepository } from '@/_services';
+import { authenticationRepository, accountRepository } from '@/_services';
 import config from 'config';
 const signalR = require('@aspnet/signalr')
 
@@ -26,12 +25,11 @@ class Dashboard extends React.Component {
         const hub = this.configureUserHub();
         this.start(hub);
 
-        this.createAndGetAccount();
+        this.getAccount();
     }
 
-    createAndGetAccount() {
-        accountRepository.create()
-            .then(id => accountRepository.get(id))
+    getAccount() {
+        accountRepository.get(this.props.location.state.id)
             .then(createdAccount => {
                 this.setState({ accountId: createdAccount.id,
                     currentPlan: createdAccount.currentPlan, 
