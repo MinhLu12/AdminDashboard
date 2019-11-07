@@ -49,7 +49,11 @@ class Dashboard extends React.Component {
     }
 
     renderUserLimitExceededMessage() {
-        return this.state.numberOfUsers == this.state.maximumNumberOfUsersAllowed;
+        if (this.state.numberOfUsers == this.state.maximumNumberOfUsersAllowed) {
+            return (
+                <div className="alert is-error">You have exceeded the maximum number of users for your account, please upgrade your plan to increase the limit.</div>
+            );
+        }
     }
 
     renderUpgradeButton() {
@@ -111,7 +115,7 @@ class Dashboard extends React.Component {
 
                     <div className="plan-content">
                         <div className="progress-bar">
-                        <div style={{width: (this.state.numberOfUsers/this.state.maximumNumberOfUsersAllowed) + '%'}} className="progress-bar-usage"></div>
+                        <div style={{width: (this.state.numberOfUsers/this.state.maximumNumberOfUsersAllowed) * 100 + '%'}} className="progress-bar-usage"></div>
                         </div>
 
                         <h3>Users: {this.state.numberOfUsers}/{this.state.maximumNumberOfUsersAllowed}</h3>
