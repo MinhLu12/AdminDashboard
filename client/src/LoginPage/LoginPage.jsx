@@ -33,7 +33,7 @@ class LoginPage extends React.Component {
                 .then(id => {
                     this.props.history.push({
                         pathname: `/Dashboard`,
-                        state: { id }
+                        state: { id: id }
                     })
                 })
             });
