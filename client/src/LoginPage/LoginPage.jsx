@@ -27,7 +27,7 @@ class LoginPage extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
 
-        authenticationRepository.login(this.state.username, this.state.password)
+        authenticationRepository.login(this.state.username.split('@')[0], this.state.password)
             .then(() => this.props.history.push('/Dashboard'))
       }
 
