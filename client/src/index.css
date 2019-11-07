@@ -26,8 +26,8 @@ html, body {
   
   .alert.is-success {
     background: #00BFA5;
+    cursor: pointer;
   }
-  
   
   /*
   * BUTTON CSS

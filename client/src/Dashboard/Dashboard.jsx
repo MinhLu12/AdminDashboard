@@ -16,11 +16,13 @@ class Dashboard extends React.Component {
             numberOfUsers: null,
             maximumNumberOfUsersAllowed: null,
             pricePerMonth: null,
-            hub: null
+            hub: null,
+            showUpgradedSuccessMessage: false
         };
 
         this.logout = this.logout.bind(this);
         this.upgradePlan = this.upgradePlan.bind(this);
+        this.hideUpgradedSuccessMessage = this.hideUpgradedSuccessMessage.bind(this);
     }
 
     componentDidMount() {
@@ -76,20 +78,26 @@ class Dashboard extends React.Component {
     upgradePlan() {
         accountRepository.upgradePlan(this.state.accountId);
         this.setState({ currentPlan: PlanTypes.ENTERPRISE_PLAN, maximumNumberOfUsersAllowed: 1000, pricePerMonth: 1000});
+        this.setState({ showUpgradedSuccessMessage: true });
     }
 
     renderHeader() {
         return (
+            // need enum of string and int...maybe not an enum but an object
             <header>${this.state.currentPlan} Plan - ${this.state.pricePerMonth}/Month</header>
         );
     }
 
     renderUpgradeSuccessMessage() {
-        if (this.state.currentPlan == PlanTypes.ENTERPRISE_PLAN) {
+        if (this.state.currentPlan == PlanTypes.ENTERPRISE_PLAN && this.state.showUpgradedSuccessMessage) {
             return (
-                <div className="alert is-success">Your account has been upgraded successfully!</div>
+                <div className="alert is-success" onClick={this.hideUpgradedSuccessMessage}>Your account has been upgraded successfully!</div>
             );
         }
+    }
+
+    hideUpgradedSuccessMessage() {
+        this.setState({ showUpgradedSuccessMessage: false});
     }
 
     logout() {

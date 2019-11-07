@@ -32,14 +32,16 @@ class LoginPage extends React.Component {
                 accountRepository.create()
                 .then(id => {
                     this.props.history.push({
-                        pathname: '/Dashboard',
-                        state: { id: id }
+                        pathname: `/Dashboard`,
+                        state: { id }
                     })
                 })
             });
       }
 
     render() {
+        const { username, password } = this.state;
+
         return (
             <div>
                 <form className="login-form" onSubmit={this.handleSubmit}>
@@ -47,12 +49,12 @@ class LoginPage extends React.Component {
 
                     <div>
                         <label htmlFor="email">Email Address</label>
-                        <input type="text" id="email" value={this.state.username} onChange={this.handleUsernameChange} className="field" />
+                        <input type="text" id="email" value={username} onChange={this.handleUsernameChange} className="field" />
                     </div>
 
                     <div>
                         <label htmlFor="password">Password</label>
-                        <input type="password" id="password" value={this.state.password} onChange={this.handlePasswordChange} className="field" />
+                        <input type="password" id="password" value={password} onChange={this.handlePasswordChange} className="field" />
                     </div>
 
                     <input type="submit" value="Login to my Dashboard" className="button block" />

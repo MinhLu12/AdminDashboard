@@ -7,12 +7,10 @@ import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 
 const routing = (
   <Router>
-    <div>
       <Switch>
         <Route exact path="/" component={LoginPage} />
         <Route path="/Dashboard" component={Dashboard} />
       </Switch>
-    </div>
   </Router>
 )
 
