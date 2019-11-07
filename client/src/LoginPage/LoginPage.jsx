@@ -49,7 +49,7 @@ class LoginPage extends React.Component {
 
                     <div>
                         <label htmlFor="email">Email Address</label>
-                        <input type="text" id="email" value={username} onChange={this.handleUsernameChange} className="field" />
+                        <input type="email" id="email" value={username} onChange={this.handleUsernameChange} className="field" />
                     </div>
 
                     <div>
