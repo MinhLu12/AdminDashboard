@@ -7,7 +7,7 @@ export const accountRepository = {
 };
 
 function create() {
-    const requestOptions = getOptions('POST', JSON.stringify({ "plan": 2 }));
+    const requestOptions = getOptions('POST', JSON.stringify({ "plan": 1 }));
 
     return fetch(`${config.apiUrl}/api/account`, requestOptions)
         .then(response => response.json())

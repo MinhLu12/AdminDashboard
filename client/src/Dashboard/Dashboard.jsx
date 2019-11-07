@@ -81,8 +81,15 @@ class Dashboard extends React.Component {
     renderHeader() {
         return (
             // need enum of string and int...maybe not an enum but an object
-            <header>${this.state.currentPlan} Plan - ${this.state.pricePerMonth}/Month</header>
+            <header>{this.getTextFrom(this.state.currentPlan)} Plan - ${this.state.pricePerMonth}/Month</header>
         );
+    }
+
+    getTextFrom(currentPlan) {
+        if (currentPlan == PlanTypes.STARTUP_PLAN)
+            return "Startup";
+        else
+            return "Enterprise";
     }
 
     renderUpgradeSuccessMessage() {
