@@ -7,21 +7,24 @@ export const accountRepository = {
 };
 
 function create() {
-    const requestOptions = getOptions('POST', JSON.stringify({ "plan": 1 }));
+    const requestOptions = getOptions('POST', JSON.stringify({ "plan": 2 }));
 
     return fetch(`${config.apiUrl}/api/account`, requestOptions)
         .then(response => response.json())
+        .catch(err => alert(err));
 }
 
 function upgradePlan(id) {
     const requestOptions = getOptions('PUT', JSON.stringify({ "plan": 2 }));
     
-    return fetch(`${config.apiUrl}/api/account/${id}`, requestOptions);
+    return fetch(`${config.apiUrl}/api/account/${id}`, requestOptions)
+        .catch(err => alert(err));
 }
 
 function get(id) {
     return fetch(`${config.apiUrl}/api/account/${id}`, getOptions('GET'))
-        .then(response => response.json());
+        .then(response => response.json())
+        .catch(err => alert(err));
 }
 
 function getOptions(method, body) {

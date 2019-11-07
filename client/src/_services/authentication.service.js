@@ -15,6 +15,7 @@ function login(username, password) {
     return fetch(`${config.apiUrl}/api/login/authenticate`, requestOptions)
         .then(response => response.json()
         .then(token => sessionStorage.setItem('Token', token)))
+        .catch(err => alert(err));
 }
 
 function logout() {
