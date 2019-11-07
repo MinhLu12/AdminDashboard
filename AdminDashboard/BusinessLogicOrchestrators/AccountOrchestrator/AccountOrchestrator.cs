@@ -41,7 +41,7 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
 
             await Repository.AddUser(accountId, userId);
 
-            await UserHubContext.Clients.All.SendAsync("AddedUser");
+            await UserHubContext.Clients.All.SendAsync("AddedUser", "Added!");
         }
 
         public async Task UpgradePlan(Guid accountId, UpgradePlanRequest request)

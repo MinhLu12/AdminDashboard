@@ -21,6 +21,7 @@ function create() {
 }
 
 function get(id) {
+    console.log(id);
     const requestOptions = {
         method: 'GET',
         withCredentials: true,

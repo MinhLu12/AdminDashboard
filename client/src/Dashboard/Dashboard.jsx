@@ -13,27 +13,34 @@ class Dashboard extends React.Component {
             numberOfUsers: null,
             maximumNumberOfUsersAllowed: null,
             pricePerMonth: null,
-            hubConnection: null
+            hub: null
         };
 
         this.logout = this.logout.bind(this);
     }
 
     componentDidMount() {
-        const hubConnection = new signalR.HubConnectionBuilder()
+        const hub = new signalR.HubConnectionBuilder()
         .withUrl("https://localhost:44333/userHub")
-        .configureLogging(signalR.LogLevel.Information)
-        .build();  // You have a // in your server
-        this.setState({ hubConnection });
+        .build(); 
 
-        hubConnection.on("AddedUser", data => {
-            console.log(data);
+
+        this.setState({ hub: hub }, () => {
+            this.state.hub.start()
+
+            this.state.hub.on("AddedUser", (msg) => {
+                console.log(msg);
+            });
+            console.log("YES" + this.state.hub);
         });
-        // hubConnection.start().then(function () {
-        //     console.log("connected");
-        // });
 
-        console.log(hubConnection);
+        //this.state.hub.start();
+
+
+
+        // this.state.hub.on("AddedUser", data => {
+        //     console.log(data);
+        // });
 
         accountRepository.create()
         .then(res => accountRepository.get(res))

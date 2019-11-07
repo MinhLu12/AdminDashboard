@@ -53,6 +53,7 @@ namespace AdminDashboard.Main
                 .WithOrigins("http://localhost:8080")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
+                .AllowCredentials()
                 .Build());
 
             app.UseHttpsRedirection();
