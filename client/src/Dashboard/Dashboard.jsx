@@ -24,23 +24,13 @@ class Dashboard extends React.Component {
         .withUrl("https://localhost:44333/userHub")
         .build(); 
 
-
         this.setState({ hub: hub }, () => {
             this.state.hub.start()
 
-            this.state.hub.on("AddedUser", (msg) => {
-                console.log(msg);
+            this.state.hub.on("AddedUser", () => {
+                this.setState({ numberOfUsers: this.state.numberOfUsers + 1 })
             });
-            console.log("YES" + this.state.hub);
         });
-
-        //this.state.hub.start();
-
-
-
-        // this.state.hub.on("AddedUser", data => {
-        //     console.log(data);
-        // });
 
         accountRepository.create()
         .then(res => accountRepository.get(res))
