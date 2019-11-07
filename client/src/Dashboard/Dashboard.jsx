@@ -13,8 +13,8 @@ class Dashboard extends React.Component {
         this.state = {
             accountId: null,
             currentPlan: null,
-            numberOfUsers: null,
-            maximumNumberOfUsersAllowed: null,
+            userCount: null,
+            userLimit: null,
             pricePerMonth: null,
             showUpgradedSuccessMessage: false
         };
@@ -36,8 +36,8 @@ class Dashboard extends React.Component {
             .then(account => {
                 this.setState({ accountId: account.id,
                     currentPlan: account.currentPlan, 
-                    numberOfUsers: account.users.length, 
-                    maximumNumberOfUsersAllowed: account.maximumNumberOfUsersAllowed,
+                    userCount: account.users.length, 
+                    userLimit: account.maximumNumberOfUsersAllowed,
                     pricePerMonth: account.pricePerMonth })
         });
     }
@@ -46,7 +46,7 @@ class Dashboard extends React.Component {
         hub.start()
 
         hub.on("AddedUser", () => {
-            this.setState({ numberOfUsers: this.state.numberOfUsers + 1 })
+            this.setState({ userCount: this.state.userCount + 1 })
         });
     }
 
@@ -57,7 +57,7 @@ class Dashboard extends React.Component {
     }
 
     renderUserLimitExceededMessage() {
-        if (this.state.numberOfUsers == this.state.maximumNumberOfUsersAllowed) {
+        if (this.state.userCount == this.state.userLimit) {
             return (
                 <div className="alert is-error">You have exceeded the maximum number of users for your account, please upgrade your plan to increase the limit.</div>
             );
@@ -74,7 +74,7 @@ class Dashboard extends React.Component {
 
     upgradePlan() {
         accountRepository.upgradePlan(this.state.accountId);
-        this.setState({ currentPlan: PlanTypes.ENTERPRISE_PLAN, maximumNumberOfUsersAllowed: 1000, pricePerMonth: 1000});
+        this.setState({ currentPlan: PlanTypes.ENTERPRISE_PLAN, userLimit: 1000, pricePerMonth: 1000});
         this.setState({ showUpgradedSuccessMessage: true });
     }
 
@@ -103,6 +103,9 @@ class Dashboard extends React.Component {
     }
     
     render() {
+        const { accountId, userCount, userLimit } = this.state;
+        const progress = `${userCount / userLimit * 100}%`;
+
         return (
             <div>
                 <header className="top-nav">
@@ -121,11 +124,11 @@ class Dashboard extends React.Component {
 
                     <div className="plan-content">
                         <div className="progress-bar">
-                        <div style={{width: (this.state.numberOfUsers/this.state.maximumNumberOfUsersAllowed) * 100 + '%'}} className="progress-bar-usage"></div>
+                        <div style={{width: progress}} className="progress-bar-usage"></div>
                         </div>
 
-                        <h3>Users: {this.state.numberOfUsers}/{this.state.maximumNumberOfUsersAllowed}</h3>
-                        <h3>Account Id: {this.state.accountId}</h3>
+                        <h3>Users: {userCount}/{userLimit}</h3>
+                        <h3>Account Id: {accountId}</h3>
                     </div>
 
                     <footer>
