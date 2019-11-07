@@ -17,7 +17,6 @@ class LoginPage extends React.Component {
     }
 
     handleUsernameChange(event) {
-        // TODO: Split it
         this.setState({ username: event.target.value });
     }
 
@@ -40,7 +39,7 @@ class LoginPage extends React.Component {
 
                     <div>
                         <label htmlFor="email">Email Address</label>
-                        <input type="email" id="email" value={this.state.username} onChange={this.handleUsernameChange} className="field" />
+                        <input type="text" id="email" value={this.state.username} onChange={this.handleUsernameChange} className="field" />
                     </div>
 
                     <div>
