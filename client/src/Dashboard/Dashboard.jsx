@@ -43,7 +43,7 @@ class Dashboard extends React.Component {
     }
 
     start(hub) {
-        hub.start()
+        hub.start().catch(() => alert("Error establishing handshake with server"));
 
         hub.on("AddedUser", () => {
             this.setState({ userCount: this.state.userCount + 1 })
@@ -80,7 +80,6 @@ class Dashboard extends React.Component {
 
     renderHeader() {
         return (
-            // need enum of string and int...maybe not an enum but an object
             <header>{this.getTextFrom(this.state.currentPlan)} Plan - ${this.state.pricePerMonth}/Month</header>
         );
     }
