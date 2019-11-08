@@ -3,6 +3,7 @@ using AdminDashboard.BusinessLogicOrchestrators.LoginOrchestrator;
 using AdminDashboard.Main.Configurations;
 using AdminDashboard.Main.Databases;
 using AdminDashboard.Repositories.AccountRepository;
+using AdminDashboard.SignalR;
 using GravitationalTest.BusinessOrchestrators.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -31,7 +32,10 @@ namespace AdminDashboard.Main
             ConfigureOrchestrators(services);
             ConfigureRepositories(services);
             ConfigureDatabase(services);
+
             ConfigureAuthorization(services);
+
+            services.AddSignalR();
 
             services.AddControllers();
         }
@@ -44,6 +48,14 @@ namespace AdminDashboard.Main
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(builder =>
+            builder
+                .WithOrigins("http://localhost:8080", "http://localhost:8081")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .Build());
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -54,6 +66,7 @@ namespace AdminDashboard.Main
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<UserHub>("/userHub");
             });
 
             EnsureDatabaseSchemaIsMade(app);

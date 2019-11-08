@@ -5,6 +5,8 @@ using AdminDashboard.Models.EndUserRequests;
 using AdminDashboard.Models.JsonRequests;
 using AdminDashboard.Models.Plans;
 using AdminDashboard.Repositories.AccountRepository;
+using AdminDashboard.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +17,13 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
     public class AccountOrchestrator : IAccountOrchestrator
     {
         private readonly IAccountRepository Repository;
+        private readonly IHubContext<UserHub> UserHubContext;
 
-        public AccountOrchestrator(IAccountRepository repository)
+        public AccountOrchestrator(IAccountRepository repository,
+            IHubContext<UserHub> userHubContext)
         {
             Repository = repository;
+            UserHubContext = userHubContext;
         }
 
         public async Task RegisterUserToAccount(Guid accountId, Guid userId)
@@ -35,6 +40,8 @@ namespace AdminDashboard.BusinessLogicOrchestrators.AccountOrchestrator
                 throw new UserLimitExceededException();
 
             await Repository.AddUser(accountId, userId);
+
+            await UserHubContext.Clients.All.SendAsync("AddedUser");
         }
 
         public async Task UpgradePlan(Guid accountId, UpgradePlanRequest request)

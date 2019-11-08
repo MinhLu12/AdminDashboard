@@ -1,0 +1,31 @@
+{
+    "name": "admin-dashboard",
+    "version": "1.0.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MinhLu12/AdminDashboard"
+    },
+    "scripts": {
+        "start": "webpack-dev-server --open"
+    },
+    "dependencies": {
+        "@aspnet/signalr": "^1.1.4",
+        "history": "^4.10.1",
+        "react": "^16.11.0",
+        "react-dom": "^16.11.0",
+        "react-router-dom": "^5.1.2"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.7.2",
+        "@babel/preset-env": "^7.7.1",
+        "@babel/preset-react": "^7.7.0",
+        "babel-loader": "^8.0.6",
+        "css-loader": "^3.2.0",
+        "html-webpack-plugin": "^3.2.0",
+        "path": "^0.12.7",
+        "style-loader": "^1.0.0",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10",
+        "webpack-dev-server": "^3.9.0"
+    }
+}
