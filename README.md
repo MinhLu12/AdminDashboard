@@ -33,3 +33,4 @@ Feel free to remove any sections that aren't applicable to your project.
 1. Have the integration tests run without any manual changes by overriding Startup.cs and bypassing authorization.
 2. Refactor server side so there is no concept of "Account ID", and have a default account to use by the client. On the client side, have the account already created by the time the admin logs in and simply get the default account.
 3. Use react router correctly and include the account ID as query parameters between components
+4. Upon server side errors, handle correctly in the client to redirect to an Error page
